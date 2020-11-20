@@ -1,21 +1,44 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react'
+import { FlatList, SafeAreaView, StyleSheet } from 'react-native'
+import AddItem from './components/AddItem'
+import Header from './components/Header'
+import ListItem from './components/ListItem'
 
 export default function App() {
+  const [list, setList] = useState([
+    { id: Math.random(), text: 'Milk' },
+    { id: Math.random(), text: 'Sugar' },
+    { id: Math.random(), text: 'Bread' }
+  ])
+
+  const handleDelete = id => {
+    setList(prevItems => {
+      return prevItems.filter(item => item.id !== id)
+    })
+  }
+  const handleAddItem = text => {
+    setList(prevItems => {
+      return [{ id: Math.random(), text }, ...prevItems]
+    })
+  }
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    <SafeAreaView style={styles.container}>
+      <Header />
+      <AddItem add={handleAddItem} />
+      <FlatList
+        data={list}
+        renderItem={({ item }) => (
+          <ListItem item={item.text} id={item.id} handleDelete={handleDelete} />
+        )}
+      />
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    paddingTop: 26,
+    backgroundColor: '#fff'
+  }
+})
